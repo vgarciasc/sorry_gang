@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dfaed41266658446a074e92ea74d0da, type: 3}
+  m_Name: Card Pattern 1
+  m_EditorClassIdentifier: 
+  card_text_1: 
+  card_text_2: 
+  card_text_3: 
+  show_card_text: 0
+  array:
+  - shot: {fileID: 11400000, guid: b9845a9ec6b81f14cb965645c5446522, type: 2}
+    bullet: {fileID: 11400000, guid: 1c5c12ea837ead942aa4f0c6ecb17ee4, type: 2}
+    delayAfter: 0
+    events:
+    - shotEvent: {fileID: 11400000, guid: 19d28375bee48c34086187e710aa9eb7, type: 2}
+      delayBeforeEvent: 0
