@@ -32,7 +32,7 @@ public class Boss1 : Enemy
 
         // yield return Attack_1();
         // yield return Attack_2();
-        yield return Attack_3();
+        // yield return Attack_3();
     }
 
     private IEnumerator Attack_1() {
