@@ -14,25 +14,65 @@ public class Boss1 : Enemy
     GameObject attack_2_2_prefab;
     [SerializeField]
     GameObject attack_3;
+    [SerializeField]
+    GameObject attack_4_prefab;
+
+    Coroutine currentPhase;
 
     protected override void Start()
     {
         base.Start();
 
-        StartCoroutine(BossLoop());
+        deathEvent += StartNextPhase;
+
+        // StartCoroutine(BossLoop());
+        currentPhase = StartCoroutine(BossPhase1Loop());
+    }
+    
+    void Update() {
+        if (tookWeakspotHit) {
+            tookWeakspotHit = false;
+            if (currentPhase != null) {
+                StopCoroutine(currentPhase);
+            }
+            print("Starting next phase...");
+            StartCoroutine(BossPhase1Loop());
+        }
     }
 
-    public override IEnumerator BossLoop() {
-        // while (true) {
-        //     var card = cards[0];
-        //     yield return cardEmitter.playCard(card);
-        // }
+    private IEnumerator BossPhase1Loop() {
+        while (true) {
+            // while (true) {
+            //     var card = cards[0];
+            //     yield return cardEmitter.playCard(card);
+            // }
 
-        yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.25f);
 
-        // yield return Attack_1();
-        // yield return Attack_2();
-        // yield return Attack_3();
+            // yield return Attack_1();
+            // yield return Attack_2();
+            // yield return new WaitForSeconds(2f);
+            // yield return Attack_3();
+            // yield return new WaitForSeconds(2f);
+            // yield return Attack_4();
+
+            // yield return new WaitForSeconds(2f);
+
+            // yield return new WaitWhile(() => showingWeakSpot);
+            // StartCoroutine(ShowWeakSpot(weakSpots[0], 10f));
+        }
+    }
+
+    protected override void StartNextPhase() {
+        base.StartNextPhase();
+        StartCoroutine(StartNextPhaseCoroutine());
+    }
+
+    private IEnumerator StartNextPhaseCoroutine() {
+        float duration = 3f;
+        this.transform.DOScale(Vector3.zero, duration);
+        yield return new WaitForSeconds(duration);
+        Destroy(this.gameObject);
     }
 
     private IEnumerator Attack_1() {
@@ -125,5 +165,26 @@ public class Boss1 : Enemy
         is_attack_3_in_duration = true;
         yield return new WaitForSeconds(3f);
         is_attack_3_in_duration = false;
+    }
+
+    private IEnumerator Attack_4() {
+        var posContainer = worldPointsContainer.GetChild(2);
+        var projs = new List<BasicProjectile>();
+
+        for (int i = 0; i < 6; i++) {
+            var obj = Instantiate(
+                attack_4_prefab,
+                posContainer.GetChild(i));
+            var proj = obj.GetComponentInChildren<BasicProjectile>();
+            proj.SetVelocity(Vector2.down);
+            projs.Add(proj);
+
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        foreach (var proj in projs) {
+            yield return new WaitForSeconds(0.2f);
+            proj.SetAcceleration(8f);
+        }
     }
 }

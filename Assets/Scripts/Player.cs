@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     GameObject teleportBullet;
 
     bool blockInput = false;
+    GameObject weakSpot;
 
     void Start() {
         rb = this.GetComponentInChildren<Rigidbody2D>();
@@ -58,6 +59,10 @@ public class Player : MonoBehaviour
 
     void HandleShooting() {
         if (blockInput) return;
+
+        if (Input.GetButton("Fire1") && weakSpot != null) {
+            weakSpot.GetComponent<WeakSpotArea>().TakeDamage(this);
+        }
 
         if (Input.GetButton("Fire1") && !insideShootingCooldown) {
             Shoot(bulletPrefab);
@@ -120,5 +125,19 @@ public class Player : MonoBehaviour
         teleportBullet.GetComponentInChildren<TeleportBullet>().Die();
 
         teleportBullet = null;
+    }
+
+    void OnTriggerEnter2D(Collider2D collider) {
+        var obj = collider.gameObject;
+        if (obj.CompareTag("WeakSpot")) {
+            weakSpot = obj;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D collider) {
+        var obj = collider.gameObject;
+        if (obj.CompareTag("WeakSpot")) {
+            weakSpot = null;
+        }
     }
 }

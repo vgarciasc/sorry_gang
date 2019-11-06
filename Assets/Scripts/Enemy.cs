@@ -9,11 +9,26 @@ public class Enemy : MonoBehaviour
     protected List<CardPatternData> cards = new List<CardPatternData>();
     [SerializeField]
     protected Transform worldPointsContainer;
-    
+    [SerializeField]
+    protected List<Transform> weakSpots = new List<Transform>();
+
     protected CardEmitter cardEmitter;
     protected Player player;
 
     protected Vector3 originalScale;
+
+    protected Flag tookWeakspotHit;
+    protected Flag isInvincible;
+
+    [SerializeField]
+    private int maxHealth = 50;
+    private int health;
+
+    // public delegate void changeHealthDelegate(int amount);
+    // public event changeHealthDelegate changeHealthEvent;
+
+    public delegate void deathDelegate();
+    public event deathDelegate deathEvent;
 
     protected virtual void Start()
     {
@@ -21,13 +36,9 @@ public class Enemy : MonoBehaviour
         cardEmitter.Start();
 
         originalScale = transform.localScale;
+        health = maxHealth;
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-    }
-
-    void Update()
-    {
-        
     }
 
     public virtual IEnumerator BossLoop() {
@@ -41,12 +52,20 @@ public class Enemy : MonoBehaviour
         var obj = collider.gameObject;
 
         if (obj.CompareTag("PlayerBullet")) {
+            var playerBullet = obj.GetComponent<PlayerBullet>();
+            TakeDamage(playerBullet.damage);
             Destroy(obj);
-            TakeDamage();
         }
     }
 
-    protected void TakeDamage() {
+    protected void TakeDamage(int amount) {
+        if (isInvincible) return;
+
+        health -= amount;
+        if (health < 0 && deathEvent != null) {
+            deathEvent();
+        }
+
         var sr = GetComponent<SpriteRenderer>();
         foreach (var sfc in GetComponentsInChildren<SpriteFlashComponent>()) {
             sfc.Flash();
@@ -63,12 +82,44 @@ public class Enemy : MonoBehaviour
     }
 
     Coroutine sploshCoroutine;
-
     IEnumerator DOSplosh() {
         this.transform.localScale = originalScale * 1.2f;
         while (Vector3.Distance(originalScale, this.transform.localScale) > 0.05f) {
             this.transform.localScale -= Vector3.one * Time.deltaTime * 1f;
             yield return new WaitForEndOfFrame();
         }
+    }
+
+    Tween weakspotScaleTween;
+    protected bool showingWeakSpot;
+    protected IEnumerator ShowWeakSpot(Transform weakSpot, float duration) {
+        showingWeakSpot = true;
+        weakSpot.gameObject.SetActive(true);
+        weakSpot.localScale = Vector3.one;
+        
+        var weakspotSr = weakSpot.GetComponent<SpriteRenderer>();
+        float originalOpacity = weakspotSr.color.a;
+        for (int i = 0; i < 5; i++) {
+            weakspotSr.color = HushPuppy.getColorWithOpacity(weakspotSr.color, 0f);
+            yield return new WaitForSeconds(0.05f);
+            weakspotSr.color = HushPuppy.getColorWithOpacity(weakspotSr.color, originalOpacity);
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        weakspotScaleTween = weakSpot.DOScale(Vector3.zero, duration);
+        yield return new WaitForSeconds(duration);
+    }
+
+    public void TakeWeakSpotDamage(Transform weakSpot) {
+        showingWeakSpot = false;
+        if (weakspotScaleTween != null) {
+            weakspotScaleTween.Kill();
+        }
+        weakSpot.gameObject.SetActive(false);
+        tookWeakspotHit = true;
+    }
+
+    protected virtual void StartNextPhase() {
+        isInvincible = true;
     }
 }

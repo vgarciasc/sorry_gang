@@ -7,6 +7,8 @@ public class PlayerBullet : MonoBehaviour
     [SerializeField]
     float BULLET_SPEED;
 
+    public int damage;
+
     public void Initialize(Vector3 vector) {
         this.GetComponent<Rigidbody2D>().velocity = vector * BULLET_SPEED;
     }

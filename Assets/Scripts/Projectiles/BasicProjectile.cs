@@ -1,36 +1,60 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BasicProjectile : MonoBehaviour
 {
+    [Header("Attributes")]
     [SerializeField]
     float bulletSpeed;
-
     [SerializeField]
     bool followPlayer;
     [SerializeField]
     float followPlayerDuration;
     [SerializeField]
     float followCorrectionSpeed;
+    [SerializeField]
+    bool faceVelocity;
 
-    Coroutine followPlayerCoroutine;
+    [Header("Components")]
 
     [SerializeField]
     Rigidbody2D rb;
-
     Transform player;
+
+    float acceleration = 0f;
+    Coroutine followPlayerCoroutine;
 
     void Start() {
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update() {
+        HandleAcceleration();
         HandleFollowPlayer();
+        HandleFaceVelocity();
+    }
+
+    void HandleFaceVelocity() {
+        if (faceVelocity) {
+            float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
+            this.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+        }
+    }
+
+    void HandleAcceleration() {
+        if (acceleration != 0) {
+            rb.velocity = rb.velocity + rb.velocity.normalized * acceleration * Time.deltaTime;
+        }
     }
 
     public void SetVelocity(Vector3 vector) {
         rb.velocity = vector.normalized * bulletSpeed;
+    }
+
+    public void SetAcceleration(float acceleration) {
+        this.acceleration = acceleration;
     }
     
     public void OnTriggerExit2D(Collider2D collision) {
