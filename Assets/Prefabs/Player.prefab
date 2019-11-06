@@ -143,8 +143,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c8ace8277f40ca4789ca93e68f2c08c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BASE_SPEED: 1
-  SHOT_COOLDOWN: 0.1
+  baseSpeed: 1
+  shotCooldown: 0.2
+  invincibilityDuration: 1
   bulletPrefab: {fileID: 5817274610215680834, guid: af817a7b85884954dae25c59fdf76a19,
     type: 3}
   teleportBulletPrefab: {fileID: 832495153897210358, guid: 1465197d75603aa4988ba2b563af98ce,

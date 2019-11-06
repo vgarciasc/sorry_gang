@@ -424,7 +424,7 @@ Transform:
   - {fileID: 1216537084}
   - {fileID: 781476356}
   - {fileID: 1477556032}
-  m_Father: {fileID: 1969649498293659788}
+  m_Father: {fileID: 1211209910517401776}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &745648958
@@ -1799,7 +1799,7 @@ Transform:
   m_LocalPosition: {x: 0.03, y: 2.83, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 695590519}
+  - {fileID: 1211209910517401776}
   - {fileID: 1301433233}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1885,6 +1885,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 70782731b5cc7e747866769d9181cd04, type: 2}
   worldPointsContainer: {fileID: 0}
   weakSpots: []
+  maxHealth: 50
   attack_1_prefab: {fileID: 5887573748516145237, guid: 14ae5623b48139e4f88dd0e4414f693e,
     type: 3}
   attack_2_1_prefab: {fileID: 5887573748516145237, guid: a15b8beb315c60f4eb465650f80535b1,
@@ -1937,6 +1938,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sr: {fileID: 1969649498293659791}
   flashSpeed: 5
+--- !u!1 &5985625256568435001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1211209910517401776}
+  m_Layer: 0
+  m_Name: Attacks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1211209910517401776
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5985625256568435001}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 695590519}
+  m_Father: {fileID: 1969649498293659788}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &9020380284214939547
 PrefabInstance:
   m_ObjectHideFlags: 0

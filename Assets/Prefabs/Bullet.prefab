@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 6090744823127944119}
   - component: {fileID: 6090744823127944113}
   - component: {fileID: 8610587748640535448}
+  - component: {fileID: 8893746651568614217}
   m_Layer: 0
   m_Name: Bullet
-  m_TagString: Untagged
+  m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -73,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 7a1f4ffdf2a045548ad86a24c4cbd477, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c22698cd833ccf94cb92773496734b43, type: 3}
   m_Color: {r: 1, g: 0.67557305, b: 0.3726415, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -120,7 +121,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.1666
 --- !u!114 &6090744823127944113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,3 +159,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &8893746651568614217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6090744823127944122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43bf0616373c56548a0aa10b1c9705e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnContact: 0
+  deactivateOnContact: 1
+  damage: 1

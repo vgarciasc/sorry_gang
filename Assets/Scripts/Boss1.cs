@@ -16,6 +16,8 @@ public class Boss1 : Enemy
     GameObject attack_3;
     [SerializeField]
     GameObject attack_4_prefab;
+    [SerializeField]
+    GameObject attack_5;
 
     Coroutine currentPhase;
 
@@ -42,12 +44,12 @@ public class Boss1 : Enemy
 
     private IEnumerator BossPhase1Loop() {
         while (true) {
-            // while (true) {
-            //     var card = cards[0];
-            //     yield return cardEmitter.playCard(card);
-            // }
+            var card = cards[0];
+            yield return cardEmitter.playCard(card);
 
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(1f);
+
+            yield return GetNextAttack();
 
             // yield return Attack_1();
             // yield return Attack_2();
@@ -55,6 +57,7 @@ public class Boss1 : Enemy
             // yield return Attack_3();
             // yield return new WaitForSeconds(2f);
             // yield return Attack_4();
+            // yield return Attack_5();
 
             // yield return new WaitForSeconds(2f);
 
@@ -73,6 +76,26 @@ public class Boss1 : Enemy
         this.transform.DOScale(Vector3.zero, duration);
         yield return new WaitForSeconds(duration);
         Destroy(this.gameObject);
+    }
+
+    int lastAttackIndex = -1;
+    IEnumerator GetNextAttack() {
+        int dice = -1;
+        do {
+            dice = UnityEngine.Random.Range(0, 5);
+        } while (dice == -1 && dice == lastAttackIndex);
+
+        lastAttackIndex = dice;
+        
+        switch (dice) {
+            case 0: yield return Attack_1(); break;
+            case 1: yield return Attack_2(); break;
+            case 2: yield return Attack_3(); break;
+            case 3: yield return Attack_4(); break;
+            case 4: yield return Attack_5(); break;
+        }
+
+        yield break;
     }
 
     private IEnumerator Attack_1() {
@@ -186,5 +209,25 @@ public class Boss1 : Enemy
             yield return new WaitForSeconds(0.2f);
             proj.SetAcceleration(8f);
         }
+    }
+
+    private IEnumerator Attack_5() {
+        attack_5.SetActive(true);
+
+        attack_5.transform.DOScaleX(1f, 0.05f);
+
+        float animDuration = 0.1f;
+        float totalDuration = 2f;
+        for (int i = 0; i < (int) totalDuration / animDuration; i++) {
+            attack_5.transform.DOScaleX(1.1f, animDuration);
+            yield return new WaitForSeconds(animDuration);
+            attack_5.transform.DOScaleX(1f, animDuration);
+            yield return new WaitForSeconds(animDuration);
+        }
+
+        attack_5.transform.DOScaleX(0f, 0.2f);
+        yield return new WaitForSeconds(0.2f);
+
+        attack_5.SetActive(false);
     }
 }

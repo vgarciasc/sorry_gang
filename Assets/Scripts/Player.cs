@@ -6,15 +6,20 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    float BASE_SPEED;
+    float baseSpeed;
     [SerializeField]
-    float SHOT_COOLDOWN;
+    float shotCooldown;
+    [SerializeField]
+    float invincibilityDuration;
     [SerializeField]
     GameObject bulletPrefab;
     [SerializeField]
     GameObject teleportBulletPrefab;
+    [SerializeField]
+    int maxHealth = 50;
 
     Rigidbody2D rb;
+    SpriteRenderer sr;
     bool insideShootingCooldown = false;
 
     GameObject teleportBullet;
@@ -22,8 +27,14 @@ public class Player : MonoBehaviour
     bool blockInput = false;
     GameObject weakSpot;
 
+    int health = 0;
+    bool isInvincible = false;
+
     void Start() {
         rb = this.GetComponentInChildren<Rigidbody2D>();
+        sr = this.GetComponentInChildren<SpriteRenderer>();
+
+        health = maxHealth;
     }
 
     void Update() {
@@ -41,7 +52,7 @@ public class Player : MonoBehaviour
         float hor = Input.GetAxis("Horizontal");
         float ver = Input.GetAxis("Vertical");
         
-        Vector3 motion = new Vector3(hor, ver) * BASE_SPEED / 10f;
+        Vector3 motion = new Vector3(hor, ver) * baseSpeed / 10f;
         motion = new Vector3(motion.x, motion.y, 0);
 
         rb.MovePosition(this.transform.position + motion);
@@ -111,7 +122,7 @@ public class Player : MonoBehaviour
 
     IEnumerator ShootingCooldown() {
         insideShootingCooldown = true;
-        yield return new WaitForSeconds(SHOT_COOLDOWN);
+        yield return new WaitForSeconds(shotCooldown);
         insideShootingCooldown = false;
     }
 
@@ -129,8 +140,31 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider) {
         var obj = collider.gameObject;
+
         if (obj.CompareTag("WeakSpot")) {
             weakSpot = obj;
+        }
+
+        // if (obj.CompareTag("EnemyBullet")) {
+        //     var attack = obj.GetComponentInChildren<EnemyAttack>();
+        //     if (attack == null) {
+        //         attack = obj.GetComponentInParent<EnemyAttack>();
+        //     }
+        //     attack.OnPlayerContact();
+        //     StartCoroutine(TakeDamage(attack.damage));
+        // }
+    }
+
+    void OnTriggerStay2D(Collider2D collider) {
+        var obj = collider.gameObject;
+
+        if (obj.CompareTag("EnemyBullet")) {
+            var attack = obj.GetComponentInChildren<EnemyAttack>();
+            if (attack == null) {
+                attack = obj.GetComponentInParent<EnemyAttack>();
+            }
+            attack.OnPlayerContact();
+            StartCoroutine(TakeDamage(attack.damage));
         }
     }
 
@@ -139,5 +173,26 @@ public class Player : MonoBehaviour
         if (obj.CompareTag("WeakSpot")) {
             weakSpot = null;
         }
+    }
+
+    IEnumerator TakeDamage(int amount) {
+        if (isInvincible) yield break;
+
+        health -= amount;
+        if (health <= 0) {
+            Death();
+        }
+
+        isInvincible = true;
+        sr.color = HushPuppy.getColorWithOpacity(sr.color, 0.5f);
+        yield return new WaitForSeconds(invincibilityDuration);
+        sr.color = HushPuppy.getColorWithOpacity(sr.color, 1f);
+        isInvincible = false;
+
+        yield break;
+    }
+
+    void Death() {
+        print("You're dead!");
     }
 }

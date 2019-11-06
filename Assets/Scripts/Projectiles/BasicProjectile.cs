@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicProjectile : MonoBehaviour
+public class BasicProjectile : EnemyAttack
 {
     [Header("Attributes")]
     [SerializeField]
@@ -71,19 +71,32 @@ public class BasicProjectile : MonoBehaviour
                 Vector3 diff = player.position - transform.position;
                 diff.Normalize();
 
-                // float rot_z_target = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg) % 360;
-                // float rot_z_current = (this.transform.rotation.eulerAngles.z + 90) % 360;
-                // float rot_z_motion = rot_z_current + (rot_z_target - rot_z_current) / followCorrectionSpeed;
+                float rot_z_target = TrigonometrySquash(Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg - 90);
+                // if (rot_z_target > 180) {
+                //     rot_z_target = rot_z_target - 360;
+                // }
+                float rot_z_current = TrigonometrySquash(transform.rotation.eulerAngles.z);
+                float rot_z_diff = TrigonometrySquash(rot_z_target - rot_z_current);
 
-                // transform.rotation = Quaternion.Euler(0f, 0f, rot_z_motion - 90);
-                
-                float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+                // print("rot_z_current: " + rot_z_current + ", rot_z_target: " + rot_z_target);
+                // print("rot_z_diff: " + rot_z_diff);
+                float new_rot_z = rot_z_current + rot_z_diff * followCorrectionSpeed;
+
+                transform.rotation = Quaternion.Euler(0f, 0f, new_rot_z);
+
                 this.SetVelocity(this.transform.up);
             } else {
                 followPlayerCoroutine = StartCoroutine(FollowPlayerCooldown());
             }
         }
+    }
+
+    float TrigonometrySquash(float value) {
+        // if (value < -180) value += 360;
+        // if (value > +360) value %= 360;
+        value = (value + 360) % 360;
+        if (value > 180 && value < 360) return value - 360;
+        return value;
     }
 
     IEnumerator FollowPlayerCooldown() {
