@@ -7,17 +7,14 @@ using DG.Tweening;
 public class Boss1 : Enemy
 {
     [SerializeField]
-    GameObject attack_1_prefab;
-    [SerializeField]
-    GameObject attack_2_1_prefab;
-    [SerializeField]
-    GameObject attack_2_2_prefab;
-    [SerializeField]
-    GameObject attack_3;
-    [SerializeField]
-    GameObject attack_4_prefab;
-    [SerializeField]
-    GameObject attack_5;
+    Transform possiblePositionsContainer;
+
+    public GameObject attack_1_prefab;
+    public GameObject attack_2_1_prefab;
+    public GameObject attack_2_2_prefab;
+    public GameObject attack_3;
+    public GameObject attack_4_prefab;
+    public GameObject attack_5;
 
     Coroutine currentPhase;
 
@@ -98,7 +95,22 @@ public class Boss1 : Enemy
         yield break;
     }
 
+    private IEnumerator MoveToPosition(int index) {
+        Vector3 target = possiblePositionsContainer.GetChild(index).position;
+
+        float velocity = 2f;
+        float distance = Vector2.Distance(transform.position, target);
+
+        yield return this.transform.DOMove(target, distance / velocity)
+            .SetEase(Ease.InBounce);
+        yield return new WaitForSeconds(0.5f);
+    }
+
+    //following pans
     private IEnumerator Attack_1() {
+        CardFlipManager.GetCardFlipManager().SetNewCard(spellCards[0]);
+        yield return MoveToPosition(1);
+
         var posContainer = worldPointsContainer.GetChild(0);
 
         for (int i = 0; i < 3; i++) {
@@ -110,10 +122,15 @@ public class Boss1 : Enemy
             yield return new WaitForSeconds(0.05f);
         }
 
+
         yield break;    
     }
 
+    //watermelon
     private IEnumerator Attack_2() {
+        CardFlipManager.GetCardFlipManager().SetNewCard(spellCards[1]);
+        yield return MoveToPosition(1);
+
         int initialShotQuantity = 2;
         int divisionQuantity = 6;
 
@@ -154,7 +171,11 @@ public class Boss1 : Enemy
 
     bool is_attack_3_in_duration = false;
 
+    //belly of the beast
     private IEnumerator Attack_3() {
+        CardFlipManager.GetCardFlipManager().SetNewCard(spellCards[2]);
+        yield return MoveToPosition(2);
+
         attack_3.SetActive(true);
         StartCoroutine(Attack_3_Cooldown());
         yield return new WaitUntil(() => 
@@ -190,8 +211,12 @@ public class Boss1 : Enemy
         is_attack_3_in_duration = false;
     }
 
+    //lollipop rain
     private IEnumerator Attack_4() {
+        yield return MoveToPosition(1);
+        CardFlipManager.GetCardFlipManager().SetNewCard(spellCards[3]);
         var posContainer = worldPointsContainer.GetChild(2);
+
         var projs = new List<BasicProjectile>();
 
         for (int i = 0; i < 6; i++) {
@@ -211,7 +236,11 @@ public class Boss1 : Enemy
         }
     }
 
+    //oven fire
     private IEnumerator Attack_5() {
+        yield return MoveToPosition(0);
+        CardFlipManager.GetCardFlipManager().SetNewCard(spellCards[4]);
+
         attack_5.SetActive(true);
 
         attack_5.transform.DOScaleX(1f, 0.05f);

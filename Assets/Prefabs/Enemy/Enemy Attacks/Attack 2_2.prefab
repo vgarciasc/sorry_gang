@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4568822979510696296}
   - component: {fileID: 2085838948194668745}
   - component: {fileID: 5759275719446777503}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Attack 2_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,6 +93,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d9a1ced072ce1f48a7e533681fcf6a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyOnContact: 1
+  deactivateOnContact: 0
+  damage: 1
   bulletSpeed: 3
   followPlayer: 0
   followPlayerDuration: 2
@@ -111,7 +114,7 @@ GameObject:
   - component: {fileID: 5203631240443406108}
   - component: {fileID: 2728647567061028559}
   - component: {fileID: 22226888109298613}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sprite
   m_TagString: EnemyBullet
   m_Icon: {fileID: 0}

@@ -8,6 +8,7 @@ TagManager:
   - PlayerBullet
   - WeakSpot
   - EnemyBullet
+  - CardFlipManager
   layers:
   - Default
   - TransparentFX
@@ -17,8 +18,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Enemy
+  - Background
   - 
   - 
   - 

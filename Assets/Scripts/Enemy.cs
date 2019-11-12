@@ -11,6 +11,8 @@ public class Enemy : MonoBehaviour
     protected Transform worldPointsContainer;
     [SerializeField]
     protected List<Transform> weakSpots = new List<Transform>();
+    [SerializeField]
+    protected List<CardFlipScriptableObject> spellCards = new List<CardFlipScriptableObject>();
 
     protected CardEmitter cardEmitter;
     protected Player player;
@@ -58,7 +60,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    protected void TakeDamage(int amount) {
+    public void TakeDamage(int amount) {
         if (isInvincible) return;
 
         health -= amount;

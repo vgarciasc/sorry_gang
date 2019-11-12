@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     GameObject teleportBulletPrefab;
     [SerializeField]
+    LineRenderer shotLineRenderer;
+    [SerializeField]
     int maxHealth = 50;
 
     Rigidbody2D rb;
@@ -71,6 +73,9 @@ public class Player : MonoBehaviour
     void HandleShooting() {
         if (blockInput) return;
 
+        HandleShooting2();
+        return;
+
         if (Input.GetButton("Fire1") && weakSpot != null) {
             weakSpot.GetComponent<WeakSpotArea>().TakeDamage(this);
         }
@@ -86,6 +91,53 @@ public class Player : MonoBehaviour
                 Teleport();
             }
         }
+    }
+
+    void HandleShooting2() {
+        if (Input.GetButtonDown("Fire1")) {
+            StartCoroutine(Shoot2());
+        }
+    }
+
+    IEnumerator Shoot2() {
+        SpecialCamera.GetSpecialCamera().screenShake_(0.00001f, 5);
+
+        shotLineRenderer.gameObject.SetActive(true);
+        blockInput = true;
+        rb.velocity = Vector2.zero;
+        var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        RaycastHit2D hit = Physics2D.Raycast(
+            this.transform.position,
+            new Vector3(mousePos.x - this.transform.position.x, mousePos.y - this.transform.position.y, 0),
+            100,
+            (1 << LayerMask.NameToLayer("Enemy")));
+
+        shotLineRenderer.SetPosition(0, this.transform.position);
+
+        if (hit) {
+            shotLineRenderer.SetPosition(1, hit.point);
+            var enemyAttack = EnemyAttack.GetAttackComponent(hit.collider.gameObject);
+            if (enemyAttack != null) {
+                enemyAttack.OnPlayerContact();
+            } else {
+                var enemy = hit.collider.gameObject.GetComponentInChildren<Enemy>();
+                if (enemy != null) {
+                    enemy.TakeDamage(1);
+                }
+            }
+        }
+        else {
+            shotLineRenderer.SetPosition(1, new Vector3(
+                this.transform.position.x + (mousePos.x - this.transform.position.x) * 100,
+                this.transform.position.y + (mousePos.y - this.transform.position.y) * 100,
+                0
+            ));
+        }
+        yield return HushPuppy.WaitForEndOfFrames(5);
+        // yield return new WaitForSeconds(0.05f);
+        blockInput = false;
+        shotLineRenderer.gameObject.SetActive(false);
     }
 
     public void ToggleBlockInput(bool value) {
@@ -177,6 +229,8 @@ public class Player : MonoBehaviour
 
     IEnumerator TakeDamage(int amount) {
         if (isInvincible) yield break;
+
+        SpecialCamera.GetSpecialCamera().screenShake_(0.0001f, 15);
 
         health -= amount;
         if (health <= 0) {
