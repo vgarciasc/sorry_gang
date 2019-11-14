@@ -9,6 +9,8 @@ TagManager:
   - WeakSpot
   - EnemyBullet
   - CardFlipManager
+  - FinishManager
+  - PortraitManager
   layers:
   - Default
   - TransparentFX

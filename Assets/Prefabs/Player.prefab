@@ -279,7 +279,7 @@ MonoBehaviour:
   teleportBulletPrefab: {fileID: 832495153897210358, guid: 1465197d75603aa4988ba2b563af98ce,
     type: 3}
   shotLineRenderer: {fileID: 1316909232}
-  maxHealth: 50
+  maxHealth: 25
 --- !u!1 &8158027470714812900
 GameObject:
   m_ObjectHideFlags: 0

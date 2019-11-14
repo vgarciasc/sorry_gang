@@ -8,7 +8,7 @@ public class WeakSpotArea : MonoBehaviour
     Enemy enemy;
 
     public void TakeDamage(Player player) {
-        player.transform.position = Vector2.zero;
+        // player.transform.position = Vector2.zero;
         enemy.TakeWeakSpotDamage(this.transform);
     }
 }

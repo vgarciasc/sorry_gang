@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
 
     [SerializeField]
     private int maxHealth = 50;
-    private int health;
+    protected int health;
 
     // public delegate void changeHealthDelegate(int amount);
     // public event changeHealthDelegate changeHealthEvent;
@@ -87,7 +87,7 @@ public class Enemy : MonoBehaviour
     IEnumerator DOSplosh() {
         this.transform.localScale = originalScale * 1.2f;
         while (Vector3.Distance(originalScale, this.transform.localScale) > 0.05f) {
-            this.transform.localScale -= Vector3.one * Time.deltaTime * 1f;
+            this.transform.localScale -= Vector3.one * Time.deltaTime * 2f;
             yield return new WaitForEndOfFrame();
         }
     }
@@ -123,5 +123,11 @@ public class Enemy : MonoBehaviour
 
     protected virtual void StartNextPhase() {
         isInvincible = true;
+    }
+
+    public virtual void DieAfterFinalization() { }
+
+    public float GetHealthPercentage() {
+        return health / (float) maxHealth;
     }
 }

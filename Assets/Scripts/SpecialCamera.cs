@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class SpecialCamera : MonoBehaviour
 {
     Vector3 originalPos;
+    float originalSize;
 
     public static SpecialCamera GetSpecialCamera() {
         return Camera.main.GetComponentInChildren<SpecialCamera>();
@@ -12,6 +14,18 @@ public class SpecialCamera : MonoBehaviour
 
     void Start() {
         originalPos = this.transform.localPosition;
+        originalSize = Camera.main.orthographicSize;
+    }
+
+    public IEnumerator Zoom(float orthoSize, Vector3 pos, float duration) {
+        Camera.main.DOOrthoSize(orthoSize, duration);
+        Camera.main.transform.DOMove(pos, duration);
+        yield return new WaitForSeconds(duration);
+    }
+
+    public void ResetState() {
+        Camera.main.orthographicSize = this.originalSize;
+        Camera.main.transform.position = originalPos;
     }
     
     #region Screen Shake

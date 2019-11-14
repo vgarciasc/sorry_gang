@@ -73,12 +73,13 @@ public class Player : MonoBehaviour
     void HandleShooting() {
         if (blockInput) return;
 
-        HandleShooting2();
-        return;
-
         if (Input.GetButton("Fire1") && weakSpot != null) {
             weakSpot.GetComponent<WeakSpotArea>().TakeDamage(this);
+            return;
         }
+
+        HandleShooting2();
+        return;
 
         if (Input.GetButton("Fire1") && !insideShootingCooldown) {
             Shoot(bulletPrefab);
@@ -119,7 +120,7 @@ public class Player : MonoBehaviour
             shotLineRenderer.SetPosition(1, hit.point);
             var enemyAttack = EnemyAttack.GetAttackComponent(hit.collider.gameObject);
             if (enemyAttack != null) {
-                enemyAttack.OnPlayerContact();
+                enemyAttack.TakeDamage(1);
             } else {
                 var enemy = hit.collider.gameObject.GetComponentInChildren<Enemy>();
                 if (enemy != null) {
@@ -230,6 +231,8 @@ public class Player : MonoBehaviour
     IEnumerator TakeDamage(int amount) {
         if (isInvincible) yield break;
 
+        PlayerPortraitManager.GetPlayerPortraitManager().TakeDamage();
+
         SpecialCamera.GetSpecialCamera().screenShake_(0.0001f, 15);
 
         health -= amount;
@@ -247,6 +250,18 @@ public class Player : MonoBehaviour
     }
 
     void Death() {
-        print("You're dead!");
+        GameController.GetGameController().TransitionToGameOverScreen();
+    }
+
+    public void ToggleFreeze(bool value) {
+        this.isInvincible = value;
+        this.blockInput = value;
+        if (!value) {
+            rb.velocity = Vector3.zero;
+        }
+    }
+
+    public float GetHealthPercentage() {
+        return health / (float) maxHealth;
     }
 }

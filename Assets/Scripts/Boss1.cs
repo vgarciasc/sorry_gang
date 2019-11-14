@@ -34,27 +34,32 @@ public class Boss1 : Enemy
             if (currentPhase != null) {
                 StopCoroutine(currentPhase);
             }
-            print("Starting next phase...");
-            StartCoroutine(BossPhase1Loop());
+
+            FinishManager.GetFinishManager().StartFinalization();
+
+            // print("Starting next phase...");
+            // StartCoroutine(BossPhase1Loop());
         }
     }
 
     private IEnumerator BossPhase1Loop() {
         while (true) {
+            // yield return Attack_1();
+            // yield return Attack_2();
+            // yield return Attack_3();
+            yield return Attack_4();
+            // yield return Attack_5();
+
             var card = cards[0];
             yield return cardEmitter.playCard(card);
 
             yield return new WaitForSeconds(1f);
 
-            yield return GetNextAttack();
+            // if (this.health <= 0) {
+            //     StartCoroutine(ShowWeakSpot(weakSpots[0], 15f));
+            // }
 
-            // yield return Attack_1();
-            // yield return Attack_2();
-            // yield return new WaitForSeconds(2f);
-            // yield return Attack_3();
-            // yield return new WaitForSeconds(2f);
-            // yield return Attack_4();
-            // yield return Attack_5();
+            // yield return GetNextAttack();
 
             // yield return new WaitForSeconds(2f);
 
@@ -65,10 +70,12 @@ public class Boss1 : Enemy
 
     protected override void StartNextPhase() {
         base.StartNextPhase();
-        StartCoroutine(StartNextPhaseCoroutine());
+        StartCoroutine(ShowWeakSpot(weakSpots[0], 10f));
     }
 
-    private IEnumerator StartNextPhaseCoroutine() {
+    public override void DieAfterFinalization() { StartCoroutine(DieAfterFinalizationCoroutine()); }
+    
+    IEnumerator DieAfterFinalizationCoroutine() {
         float duration = 3f;
         this.transform.DOScale(Vector3.zero, duration);
         yield return new WaitForSeconds(duration);
@@ -113,16 +120,23 @@ public class Boss1 : Enemy
 
         var posContainer = worldPointsContainer.GetChild(0);
 
-        for (int i = 0; i < 3; i++) {
-            var obj = Instantiate(
-                attack_1_prefab,
-                posContainer.GetChild(i));
-            var proj = obj.GetComponentInChildren<BasicProjectile>();
-            proj.SetVelocity(Vector2.down);
-            yield return new WaitForSeconds(0.05f);
+        int N = UnityEngine.Random.Range(3, 6);
+        float dur = UnityEngine.Random.Range(0.5f, 0.8f);
+
+        for (int j = 0; j < N; j++) {
+            for (int i = 0; i < 3; i++) {
+                var obj = Instantiate(
+                    attack_1_prefab,
+                    posContainer.GetChild(i));
+                var proj = obj.GetComponentInChildren<BasicProjectile>();
+                proj.SetVelocity(Vector2.down);
+                yield return new WaitForSeconds(0.05f);
+            }
+
+            yield return new WaitForSeconds(dur);
         }
 
-
+        
         yield break;    
     }
 
@@ -147,7 +161,7 @@ public class Boss1 : Enemy
             proj.SetVelocity(Vector2.down);
         }
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(2f);
 
         var projs_2 = new List<BasicProjectile>();
         
@@ -217,22 +231,35 @@ public class Boss1 : Enemy
         CardFlipManager.GetCardFlipManager().SetNewCard(spellCards[3]);
         var posContainer = worldPointsContainer.GetChild(2);
 
-        var projs = new List<BasicProjectile>();
+        Vector3 firstPos = posContainer.GetChild(0).position;
+        Vector3 lastPos = posContainer.GetChild(posContainer.childCount - 1).position;
 
-        for (int i = 0; i < 6; i++) {
-            var obj = Instantiate(
-                attack_4_prefab,
-                posContainer.GetChild(i));
-            var proj = obj.GetComponentInChildren<BasicProjectile>();
-            proj.SetVelocity(Vector2.down);
-            projs.Add(proj);
+        int M = UnityEngine.Random.Range(4, 7);
 
-            yield return new WaitForSeconds(0.2f);
-        }
+        for (int k = 0; k < M; k++) {
+            var projs = new List<BasicProjectile>();
 
-        foreach (var proj in projs) {
-            yield return new WaitForSeconds(0.2f);
-            proj.SetAcceleration(8f);
+            int N = UnityEngine.Random.Range(6, 10);
+
+            for (int i = 0; i < N; i++) {
+                var obj = Instantiate(
+                    attack_4_prefab,
+                    new Vector3(
+                        firstPos.x + (lastPos.x - firstPos.x) * i / (float) (N - 1),
+                        firstPos.y + (lastPos.y - firstPos.y) * i / (float) (N - 1),
+                        0),
+                    Quaternion.identity);
+                var proj = obj.GetComponentInChildren<BasicProjectile>();
+                proj.SetVelocity(Vector2.down);
+                projs.Add(proj);
+
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            foreach (var proj in projs) {
+                yield return new WaitForSeconds(0.05f);
+                proj.SetAcceleration(15f);
+            }
         }
     }
 
